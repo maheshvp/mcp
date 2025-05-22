@@ -2,10 +2,53 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from 'url';
 import { z } from "zod";
 
-const COMPONENTS_DIR =
-  "/Users/rajatchaudhary/Documents/compose-ai/src/components/";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const COMPONENTS_DIR = path.join(__dirname, 'components');
+if (!fs.existsSync(COMPONENTS_DIR)) {
+  fs.mkdirSync(COMPONENTS_DIR, { recursive: true });
+}
+
+
+const components = ['Input', 'Button', 'FormControl', 'VStack', 'Center', 'Box', 'Text', 'Heading'];
+components.forEach(component => {
+  const filePath = path.join(COMPONENTS_DIR, `${component.toLowerCase()}.md`);
+  if (!fs.existsSync(filePath)) {
+    const content = `---
+title: ${component}
+description: A reusable ${component.toLowerCase()} component for building user interfaces.
+---
+
+# ${component} Component
+
+## Usage
+
+\`\`\`jsx
+import { ${component} } from '@gluestack-ui/themed';
+
+export default function Example() {
+  return (
+    <${component}>
+      // Add your content here
+    </${component}>
+  );
+}
+\`\`\`
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| children | ReactNode | - | The content to be rendered inside the component |
+| className | string | - | Additional CSS classes to apply |
+`;
+    fs.writeFileSync(filePath, content, 'utf8');
+  }
+});
 
 const latestPrompt = `You are a React and React Native expert. Generate COMPLETE and RUNNABLE code using only my design system components and tools sequentially: get_all_components_metadata, select_components, get_selected_components_docs. Requirements: no external component libraries, no HTML tags (<div>, <button>, <input>, etc), no StyleSheet, use TailwindCSS classes via className prop. Images must be from unsplash.com only. Import all components individually. Prefer VStack/HStack over Box component. Ensure screens are scrollable, responsive, and mobile-friendly.`;
 
@@ -141,29 +184,20 @@ function getComponentDocs(componentName) {
       COMPONENTS_DIR,
       `${componentName.toLowerCase()}.md`
     );
-
+    
     // Check if the file exists
     if (!fs.existsSync(docPath)) {
       return `Documentation not found for component: ${componentName}`;
     }
 
     // Read the markdown file
-    const docsContent = fs.readFileSync(docPath, "utf-8");
+    const docsContent = fs.readFileSync(docPath, 'utf-8');
 
-    return (
-      docsContent || `Empty documentation file for component: ${componentName}`
-    );
+    if (!docsContent) {
+      return `Empty documentation file for component: ${componentName}`;
+    }
 
-    return {
-      content: [
-        {
-          type: "text",
-          text:
-            docsContent ||
-            `Empty documentation file for component: ${componentName}`,
-        },
-      ],
-    };
+    return docsContent;
   } catch (error) {
     return `Error retrieving documentation for ${componentName}: ${error.message}`;
   }
@@ -171,9 +205,6 @@ function getComponentDocs(componentName) {
 
 function getSelectedComponentsDocs(componentNames) {
   const docsObject = {};
-  console.log(
-    `✅ Getting documentation for components: ${componentNames.join(", ")}`
-  );
 
   for (const componentName of componentNames) {
     docsObject[componentName] = getComponentDocs(componentName);
@@ -204,22 +235,17 @@ server.tool(
       .array(z.string())
       .describe("The names of the components"),
   },
-  (input) => {
-    console.log(
-      `✅ Selected components: ${input.selectedComponents.join(", ")}`
-    );
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: `You have selected: ${input.selectedComponents.join(
-            ", "
-          )}. Now proceed to get full documentation for ALL these components at once using get_selected_components_docs.`,
-        },
-      ],
-    };
-  }
+  (input) => ({
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify({
+          message: `Selected components: ${input.selectedComponents.join(", ")}`,
+          components: input.selectedComponents
+        })
+      },
+    ],
+  })
 );
 
 server.tool(
@@ -237,10 +263,8 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.log("Use Gluestack Components MCP Server running on stdio");
 }
 
 main().catch((error) => {
-  console.error("Fatal error in main():", error);
   process.exit(1);
 });
