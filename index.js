@@ -4,8 +4,10 @@ import fs from "fs";
 import path from "path";
 import { z } from "zod";
 
-const COMPONENTS_DIR =
-  "/Users/rajatchaudhary/Documents/compose-ai/src/components/";
+const COMPONENTS_DIR = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  "src/components/"
+);
 
 const latestPrompt = `You are a React and React Native expert. Generate COMPLETE and RUNNABLE code using only my design system components and tools sequentially: get_all_components_metadata, select_components, get_selected_components_docs. Requirements: no external component libraries, no HTML tags (<div>, <button>, <input>, etc), no StyleSheet, use TailwindCSS classes via className prop. Images must be from unsplash.com only. Import all components individually. Prefer VStack/HStack over Box component. Ensure screens are scrollable, responsive, and mobile-friendly.`;
 
