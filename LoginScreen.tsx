@@ -13,8 +13,40 @@ import {
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  return (
+    <Center flex={1}>
+      <Box maxWidth={400} p={4}>
+        <VStack space="md">
+          <Heading>Login</Heading>
+          
+          <FormControl>
+            <FormControl.Label>Email</FormControl.Label>
+            <Input 
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter your email"
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormControl.Label>Password</FormControl.Label>
+            <Input 
+              type="password"
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Enter your password"
+            />
+          </FormControl>
+
+          <Button onPress={() => console.log('Login:', { email, password })}>
+            <Text>Sign In</Text>
+          </Button>
+        </VStack>
+      </Box>
+    </Center>
+  );
+};
 
   const handleLogin = async () => {
     if (!email || !password) {
