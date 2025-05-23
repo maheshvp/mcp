@@ -38,6 +38,9 @@ function getAvailableComponents() {
     };
   } catch (error) {
     console.error(`Error reading components directory: ${error.message}`);
+
+    return [];
+
     return {
       content: [
         {
@@ -101,6 +104,11 @@ function getComponentMetadata(componentName) {
     console.error(
       `Error reading metadata for ${componentName}: ${error.message}`
     );
+
+    return {
+      title: componentName,
+      description: "Error reading metadata",
+    };
 
     return {
       content: [
