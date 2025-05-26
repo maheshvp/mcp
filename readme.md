@@ -64,7 +64,7 @@ Add the following configuration to your `claude_desktop_config.json` file:
 ```json
 {
   "mcpServers": {
-    "use-gluestack-components": {
+    "your-mcp-server-name": {
       "command": "node",
       "args": ["/complete/path/to/your/project/index.js"]
     }
@@ -77,7 +77,7 @@ Add the following configuration to your `claude_desktop_config.json` file:
 ```json
 {
   "mcpServers": {
-    "use-gluestack-components": {
+    "your-mcp-server-name": {
       "command": "node",
       "args": ["C:\\complete\\path\\to\\your\\project\\index.js"]
     }
@@ -103,7 +103,7 @@ After following the setup steps:
 
 1. Open Claude Desktop
 2. Look for the MCP server in the tools menu, just below the input where you enter your prompt
-3. You should see "use-gluestack-components" listed as an available MCP server
+3. You should see "your-mcp-server-name" listed as an available MCP server
 
 ---
 
@@ -133,7 +133,7 @@ Add the following configuration to your `mcp.json` file in Cursor:
 ```json
 {
   "mcpServers": {
-    "use-gluestack-components": {
+    "your-mcp-server-name": {
       "command": "node",
       "args": ["/complete/path/to/your/project/index.js"]
     }
@@ -146,7 +146,7 @@ Add the following configuration to your `mcp.json` file in Cursor:
 ```json
 {
   "mcpServers": {
-    "use-gluestack-components": {
+    "your-mcp-server-name": {
       "command": "node",
       "args": ["C:\\complete\\path\\to\\your\\project\\index.js"]
     }
