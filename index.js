@@ -2,12 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { z } from "zod";
 
-const COMPONENTS_DIR = path.join(
-  path.dirname(new URL(import.meta.url).pathname),
-  "src/components/"
-);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const COMPONENTS_DIR = path.join(__dirname, "src/components/");
 
 const latestPrompt = `You are a React and React Native expert. Generate COMPLETE and RUNNABLE code using only my design system components and tools sequentially: get_all_components_metadata, select_components, get_selected_components_docs. Requirements: no external component libraries, no HTML tags (<div>, <button>, <input>, etc), no StyleSheet, use TailwindCSS classes via className prop. Images must be from unsplash.com only. Import all components individually. Prefer VStack/HStack over Box component. Ensure screens are scrollable, responsive, and mobile-friendly.`;
 
@@ -181,9 +181,7 @@ function getComponentDocs(componentName) {
 
 function getSelectedComponentsDocs(componentNames) {
   const docsObject = {};
-  console.log(
-    `✅ Getting documentation for components: ${componentNames.join(", ")}`
-  );
+  // Getting documentation for components (console.log removed to prevent JSON-RPC interference)
 
   for (const componentName of componentNames) {
     docsObject[componentName] = getComponentDocs(componentName);
@@ -215,9 +213,7 @@ server.tool(
       .describe("The names of the components"),
   },
   (input) => {
-    console.log(
-      `✅ Selected components: ${input.selectedComponents.join(", ")}`
-    );
+    // Processing selected components (console.log removed to prevent JSON-RPC interference)
 
     return {
       content: [
@@ -247,7 +243,7 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.log("Use Gluestack Components MCP Server running on stdio");
+  // MCP Server running - console.log removed to prevent JSON-RPC interference
 }
 
 main().catch((error) => {
